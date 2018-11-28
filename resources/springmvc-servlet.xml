@@ -1,38 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
-    <!-- 配置处理器映射 HandlerMapping -->
-    <!-- 这个命名只是一个习惯而已  最后其实都会被加载到Spring容器(Spring的所有配置文件 会被加载到一起)里 -->
-    <!-- 只要/helloSpring路径被拦截到  就会自动去找对应控制器执行对应的方法handleRequest() -->
-    <!--<bean name="/index.html" class="com.ctf.controller.IndexController"></bean>-->
-
-    <!-- 扫描 -->
-    <context:component-scan base-package="com.ctf.*"/>
-    <mvc:annotation-driven/>
-    <!-- 配置视图解析器  告诉她如何解析我们的视图名 -->
-    <!-- 视图解析器根据你的名字自动拼接 -->
-    <!-- /WEB-INF/pages/helloSpring.jsp -->
-    <!-- /WEB-INF/它下面只能通过服务器内部访问(请求转发)  -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <!-- 前缀名 -->
-        <property name="prefix" value="/jsp/"/>
-        <!-- 后缀名 -->
-        <property name="suffix" value=".jsp"/>
-    </bean>
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+        
+        <!-- 扫描controller层 -->
+        <context:component-scan base-package="com.ctf.controller"></context:component-scan>
+        
+        <!-- 开启注解式映射驱动 -->
+        <mvc:annotation-driven>
+        	<!-- 解决JSON中文乱码 -->
+        	<mvc:message-converters>
+        		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+        			<property name="supportedMediaTypes">
+        				<list>
+        					<value>application/json;charset=UTF-8</value>
+        				</list>
+        			</property>
+        		</bean>
+        	</mvc:message-converters>
+        </mvc:annotation-driven>
+        
+        <!-- 配置视图解析器 -->
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        	<property name="prefix" value="/pages/jsp/"/>
+        	<property name="suffix" value=".jsp"/>
+        </bean>
+        
+        <!-- 配置静态资源放行 -->
+        <mvc:resources location="/static/" mapping="/static/**"></mvc:resources>
+        
+        <!-- 配置全局异常处理 -->
+        <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        	<property name="exceptionMappings">
+        		<props>
+        			<prop key="java.lang.RuntimeException">redirect:/500.jsp</prop>
+        			<prop key="javax.naming.NoPermissionException">redirect:/403.jsp</prop>
+        		</props>
+        	</property>
+        </bean>
+        
+        <!-- 文件上传 -->
+        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        	<property name="defaultEncoding" value="UTF-8"/>
+        	<!-- 单位：字节 -->
+        	<!-- <property name="maxUploadSize" value=""/> -->
+        </bean>
+        
+        <!-- 配置拦截器 -->
+        <!-- <mvc:interceptors>
+        	<mvc:interceptor>
+        		<mvc:mapping path="/dev/**"/>
+        		<mvc:mapping path="/manager/**"/>
+        		<mvc:exclude-mapping path="/dev/dologin"/>
+        		<bean class=""></bean>
+        	</mvc:interceptor>
+        </mvc:interceptors> -->
+        
 </beans>

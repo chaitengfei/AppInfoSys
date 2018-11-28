@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <!-- 配置文件的根元素节点 -->
 <configuration>
+    <!-- 给所有实体类起别名 -->
+    <!--<typeAliases>-->
+        <!--<package name="com.ctf.entity">-->
+            <!---->
+        <!--</package>-->
+    <!--</typeAliases>-->
     <!-- 通过resource属性从外部指定properties属性文件 -->
     <!-- setting 设置MyBatis的一些行为 比如log日志 -->
     <properties resource="db.properties"></properties>
@@ -23,6 +29,6 @@
     <!-- mappers 告诉MyBatis去哪里找sql映射文件 -->
     <mappers>
         <!-- mapper 具体指定sql映射文件的路径 -->
-        <mapper class="com.ctf.dao.SmbmsUsermapper"/>
+        <mapper class="com.ctf.dao.devuser.DevUserMapper"/>
     </mappers>
 </configuration>
