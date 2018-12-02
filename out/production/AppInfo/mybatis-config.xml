@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 配置文件的根元素节点 -->
+<configuration>
+    <!-- 给所有实体类起别名 -->
+    <!--<typeAliases>-->
+        <!--<package name="com.ctf.entity">-->
+            <!---->
+        <!--</package>-->
+    <!--</typeAliases>-->
+    <!-- 通过resource属性从外部指定properties属性文件 -->
+    <!-- setting 设置MyBatis的一些行为 比如log日志 -->
+    <properties resource="db.properties"></properties>
+    <!-- environments 配置MyBatis的多套运行环境 -->
+    <environments default="development">
+        <!-- environment 配置MyBatis的一套运行环境 -->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.connection.url}"/>
+                <property name="username" value="${jdbc.connection.username}"/>
+                <property name="password" value="${jdbc.connection.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- mappers 告诉MyBatis去哪里找sql映射文件 -->
+    <mappers>
+        <!-- mapper 具体指定sql映射文件的路径 -->
+        <mapper class="com.ctf.dao.devuser.DevUserMapper"/>
+    </mappers>
+</configuration>

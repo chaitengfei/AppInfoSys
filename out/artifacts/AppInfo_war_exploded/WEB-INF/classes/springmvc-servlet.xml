@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 配置处理器映射 HandlerMapping -->
+    <!-- 这个命名只是一个习惯而已  最后其实都会被加载到Spring容器(Spring的所有配置文件 会被加载到一起)里 -->
+    <!-- 只要/helloSpring路径被拦截到  就会自动去找对应控制器执行对应的方法handleRequest() -->
+    <!--<bean name="/index.html" class="com.ctf.controller.IndexController"></bean>-->
+
+    <!-- 扫描 -->
+    <context:component-scan base-package="com.ctf.controller"></context:component-scan>
+    <!-- 会自动注册RequestMappingHandlerMapping与RequestMappingHandlerAdapter两个Bean -->
+    <mvc:annotation-driven/>
+
+    <!--配置视图解析器，自动拼接视图-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--前缀名-->
+        <property name="prefix" value="/pages/"></property>
+        <!--后缀名-->
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+
+    <!-- 多视图解析器 -->
+    <!--<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">-->
+        <!--<property name="favorParameter" value="true"/>-->
+        <!--<property name="defaultContentType" value="text/html" />-->
+        <!--<property name="mediaTypes">-->
+            <!--<map>-->
+                <!--<entry key="html" value="text/html; charset=UTF-8"/>-->
+                <!--<entry key="json" value="application/json; charset=UTF-8"/>-->
+                <!--<entry key="xml" value="application/xml; charset=UTF-8"/>-->
+            <!--</map>-->
+        <!--</property>-->
+        <!--<property name="viewResolvers">-->
+            <!--<list>-->
+                <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+                    <!--<property name="prefix" value="/WEB-INF/jsp/"/>-->
+                    <!--<property name="suffix" value=".jsp"/>-->
+                <!--</bean>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 拦截的Mapping -->
+            <mvc:mapping path="/test/heheda"/>
+            <!-- 拦截器 -->
+            <!-- 执行方法前 进行判断返回true或false进行拦截与否-->
+            <!-- 执行方法时 -->
+            <!-- 执行方法后 -->
+            <bean class="com.ctf.util.filter.LoginFilter"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--全局异常配置-->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.RuntimeException">error</prop>
+            </props>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value="text/plain;charset=UTF-8" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 配置resources指向js文件 -->
+    <!--<mvc:resources mapping="/static/js/**" location="/static/js/"/>-->
+
+    <mvc:resources mapping="/static/**" location="/static/"/>
+    <!-- 配置指向html避免浏览器启动html报错 -->
+    <mvc:resources mapping="/pages/*.html" location="/pages/"/>
+
+</beans>
